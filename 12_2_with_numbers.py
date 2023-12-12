@@ -1,3 +1,5 @@
+import time
+
 def possible(info,test):
   tmp = [True if a==b or a=='?' else False for (a,b) in zip(info,test)]
   return all(tmp)
@@ -36,24 +38,33 @@ def split(x, n, info, blocks):
     count += split(x-i,n-1, info[(i+blocks[0]):], blocks[1:])
   return count
 
+def execute():
+  ss = 0
+  for line in infos:
+    info, blocks = line.split(" ")
+    blocks = [int(i) for i in blocks.split(",")]
+
+    # unfold
+    blocks = blocks * 5
+    info = (info + '?')*4 + info
+
+    info = '.' + info + '.'
+
+    l = len(info)
+    nwhites = l - sum(blocks)
+
+    s = split(nwhites, len(blocks)+1, info, blocks)
+    ss += s
+  return ss
+
+def benchmark():
+  for i in range(5):
+    t = time.time()
+    ss = execute()
+    t2 = time.time()
+    print('ss:',ss)
+    print('t2-t:',t2-t)
+
+
 infos = open('12_test').read().splitlines()
-
-ss = 0
-for line in infos:
-  info, blocks = line.split(" ")
-  blocks = [int(i) for i in blocks.split(",")]
-
-  # unfold
-  blocks = blocks * 5
-  info = (info + '?')*4 + info
-
-  info = '.' + info + '.'
-
-  l = len(info)
-  nwhites = l - sum(blocks)
-
-  s = split(nwhites, len(blocks)+1, info, blocks)
-  print(s)
-  ss += s
-
-print('ss:',ss)
+benchmark()
