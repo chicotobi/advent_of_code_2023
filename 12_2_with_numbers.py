@@ -3,16 +3,31 @@ def possible(info,test):
   return all(tmp)
 
 def split(x, n, info, blocks):
+
   if n == 1:
     if '#' in info:
       return 0
     else:
       return 1
+
+  # Additional break condition
+  if sum(1 for i in info if i == '#') > sum(blocks):
+    #print('early return')
+    return 0
+
+  # Additional break condition
+  if sum(1 for i in info if i == '.') + sum(blocks) > len(info):
+    #print('early return')
+    return 0
+
   count = 0
-  for i in range(1,x+1):
+  #min_amount_zeros = max(1,max(info.find('?')-1,info.find('#')-1))
+  #print("min_amount_zeros",min_amount_zeros)
+  min_amount_zeros = 1
+  for i in range(min_amount_zeros,x+1):
     # Check if zeros possible
     if not possible(info[:i],'.'*i):
-      break
+      return count
 
     # Check if ones possible
     if not possible(info[i:(i+blocks[0])],'#'*blocks[0]):
@@ -29,14 +44,16 @@ for line in infos:
   blocks = [int(i) for i in blocks.split(",")]
 
   # unfold
-  blocks = blocks + blocks + blocks + blocks + blocks
-  info = info + '?' + info + '?' + info + '?' + info + '?' + info
+  blocks = blocks * 5
+  info = (info + '?')*4 + info
 
   info = '.' + info + '.'
 
   l = len(info)
   nwhites = l - sum(blocks)
 
-  ss += split(nwhites, len(blocks)+1, info, blocks)
+  s = split(nwhites, len(blocks)+1, info, blocks)
+  print(s)
+  ss += s
 
 print('ss:',ss)
