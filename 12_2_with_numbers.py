@@ -5,10 +5,10 @@ def possible(info,test):
 def split(x, n, info, blocks):
   if n == 1:
     if '#' in info:
-      return []
+      return 0
     else:
-      return [[x]]
-  ls = []
+      return 1
+  count = 0
   for i in range(1,x+1):
     # Check if zeros possible
     if not possible(info[:i],'.'*i):
@@ -18,17 +18,8 @@ def split(x, n, info, blocks):
     if not possible(info[i:(i+blocks[0])],'#'*blocks[0]):
       continue
 
-    t = split(x-i,n-1, info[(i+blocks[0]):], blocks[1:])
-    t2 = [[i] + j for j in t]
-    ls += t2
-  return ls
-
-def transform(x, blocks):
-  t = [[] for j in range(2*len(blocks)+1)]
-  t[::2] = ['.'*j for j in x]
-  t[1::2] = ['#'*j for j in blocks]
-  return ''.join(t)
-
+    count += split(x-i,n-1, info[(i+blocks[0]):], blocks[1:])
+  return count
 
 infos = open('12_test').read().splitlines()
 
@@ -46,11 +37,6 @@ for line in infos:
   l = len(info)
   nwhites = l - sum(blocks)
 
-  combs = split(nwhites, len(blocks)+1, info, blocks)
-
-  #S = [transform(i,blocks) for i in combs]
-
-  print(len(combs))
-  ss += len(combs)
+  ss += split(nwhites, len(blocks)+1, info, blocks)
 
 print('ss:',ss)
